@@ -44,17 +44,17 @@ public class Simulation extends SwingWorker<Void, Long> {
                     car.y = race.loop.getHeight()-1;
                     continue;
                 }
-                var rgb = race.loop.getRGB((int) round(car.x), (int) round(car.y));
                 var save = true;
-                if ((rgb & 0xFF0000) < 253 || (rgb & 0x00FF00) < 253 || (rgb & 0x0000FF) < 253) {
+                if (!race.free(car.x,  car.y)) {
                     if (car.vel > car.maxVel/20) {
                         car.vel = car.maxVel/20;
                     }
                     save = false;
                 }
+                
                 car.move(delta);
-                rgb = race.loop.getRGB((int) round(car.x), (int) round(car.y));
-                if (save && ((rgb & 0xFF0000) < 253 || (rgb & 0x00FF00) < 253 || (rgb & 0x0000FF) < 253)) {
+
+                if (save && !race.free(car.x, car.y)) {
                     car.vel = 0;
                     car.accel = 0;
                 }

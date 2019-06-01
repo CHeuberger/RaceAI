@@ -35,6 +35,7 @@ public class CockpitPanel extends JPanel {
     
     public CockpitPanel() {
         Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+            @SuppressWarnings("incomplete-switch")
             @Override
             public void eventDispatched(AWTEvent event) {
                 if (car == null) 
@@ -66,6 +67,9 @@ public class CockpitPanel extends JPanel {
         
         var gg = (Graphics2D) g.create();
         try {
+            if (car != null) {
+                gg.drawString(car.id, 4, 12);
+            }
             velocity(gg);
             direction(gg);
         } finally {

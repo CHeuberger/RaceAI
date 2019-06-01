@@ -40,13 +40,17 @@ public class Main {
     }
     
     private void init() {
-        loop = new RacePanel(race, carImage);
-        var car = new Car("test1", 200, 2,180, 200);
-        car.dir = 330;
-        race.cars.add(car);
-        
         cockpit = new CockpitPanel();
-        cockpit.car(car);
+        
+        loop = new RacePanel(race, carImage);
+        loop.addListener(cockpit::car);
+        var x = 300;
+        var y = 100;
+        for (var i = 0; i < 5; i++) {
+            var car = new Car(Integer.toString(i), 200, 2, x, y);
+            race.cars.add(car);
+            y += 19;
+        }
         
         var frame = new JFrame("Race");
         frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);

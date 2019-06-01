@@ -6,8 +6,12 @@ import static java.lang.Math.*;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -21,6 +25,30 @@ public class RacePanel extends JPanel {
     public RacePanel(Race race, BufferedImage carImage) {
         this.race = requireNonNull(race);
         this.carImage = requireNonNull(carImage);
+        
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.getClickCount() < 2)
+                    return;
+                var x = e.getX();
+                var y = e.getY();
+                Car next = null;
+                double dist = Double.MAX_VALUE;
+                for (Car car : race.cars) {
+                    var dx = car.x - x;
+                    var dy = car.y - y;
+                    var d = dx*dx + dy*dy;
+                    if (d < 144 && d < dist) {
+                        next = car;
+                        dist = d;
+                    }
+                }
+                if (next != null) {
+                    fireSelected(next);
+                }
+            }
+        });
     }
     
     @Override
@@ -52,5 +80,27 @@ public class RacePanel extends JPanel {
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(race.loop.getWidth(this), race.loop.getHeight(this));
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    public static interface Listener {
+        public void selected(Car car);
+    }
+    
+    private final List<Listener> listeners = new ArrayList<>();
+    
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+    
+    public void removeListener(Listener listener) {
+        listeners.remove(listener);
+    }
+    
+    private void fireSelected(Car car) {
+        for (Listener listener : listeners) {
+            listener.selected(car);
+        }
     }
 }

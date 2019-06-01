@@ -1,12 +1,22 @@
 package cfh.race;
 
+import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_D;
+import static java.awt.event.KeyEvent.VK_S;
+import static java.awt.event.KeyEvent.VK_SHIFT;
+import static java.awt.event.KeyEvent.VK_SPACE;
+import static java.awt.event.KeyEvent.VK_W;
 import static java.lang.Math.*;
 
+import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -22,6 +32,33 @@ public class CockpitPanel extends JPanel {
     private static final int SCALE = 5;
 
     private Car car = null;
+    
+    public CockpitPanel() {
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+            @Override
+            public void eventDispatched(AWTEvent event) {
+                if (car == null) 
+                    return;
+                KeyEvent e = (KeyEvent) event;
+                if (e.getID() == e.KEY_PRESSED) {
+                    switch (e.getKeyCode()) {
+                        case VK_SPACE: car.accel = -200; break;
+                        case VK_W: car.accel += 2; break;
+                        case VK_S: car.accel -= 2; break;
+                        case VK_SHIFT: car.turn = 0; break;
+                        case VK_A: car.turn -= 0.2; break;
+                        case VK_D: car.turn += 0.2; break;
+                    }
+                } else if (e.getID() == e.KEY_RELEASED) {
+                    switch (e.getKeyCode()) {
+                        case VK_SPACE: car.accel = 0; break;
+                        case VK_W: car.accel = 0; break;
+                        case VK_S: car.accel = 0; break;
+                    }
+                }
+            }
+        }, AWTEvent.KEY_EVENT_MASK);
+    }
     
     @Override
     protected void paintComponent(Graphics g) {

@@ -1,5 +1,6 @@
 package cfh.race;
 
+import static java.lang.Math.*;
 import static java.util.Objects.*;
 
 import java.awt.Component;
@@ -30,7 +31,25 @@ public class Simulation extends SwingWorker<Void, Long> {
                 delta = System.currentTimeMillis() - time;
             }
             for (Car car : race.cars) {
+                if (car.x < 0 || car.x >= race.loop.getWidth() || car.y < 0 || car.y > race.loop.getHeight()) {
+                    car.vel = 0;
+                    car.accel = 0;
+                    continue;
+                }
+                var rgb = race.loop.getRGB((int) round(car.x), (int) round(car.y));
+                var save = true;
+                if ((rgb & 0xFF0000) < 253 || (rgb & 0x00FF00) < 253 || (rgb & 0x0000FF) < 253) {
+                    if (car.vel > car.maxVel/20) {
+                        car.vel = car.maxVel/20;
+                    }
+                    save = false;
+                }
                 car.move(delta);
+                rgb = race.loop.getRGB((int) round(car.x), (int) round(car.y));
+                if (save && ((rgb & 0xFF0000) < 253 || (rgb & 0x00FF00) < 253 || (rgb & 0x0000FF) < 253)) {
+                    car.vel = 0;
+                    car.accel = 0;
+                }
             }
             time += delta;
             publish(time);

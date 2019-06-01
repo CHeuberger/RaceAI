@@ -35,12 +35,18 @@ public class Car {
     
     public void move(long delta) {
         var v = vel * delta / 1_000.0;
-        x += cos(dir) * v;
-        y += sin(dir) * v;
+        var d = toRadians(dir);
+        x += v * cos(d);
+        y += v * sin(d);
         
         vel += accel * delta / 1_000.0;
-        if (vel < 0) vel = 0;
-        else if (vel > maxVel) vel = maxVel;
+        if (vel < 0) {
+            vel = 0;
+            accel = 0;
+        } else if (vel > maxVel) {
+            vel = maxVel;
+            accel = 0;
+        }
         if (turn < -maxTurn) turn = -maxTurn;
         else if (turn > maxTurn) turn = maxTurn;
         dir += turn  * v;

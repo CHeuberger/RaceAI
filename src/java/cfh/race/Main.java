@@ -1,6 +1,10 @@
 package cfh.race;
 
+import static java.awt.event.KeyEvent.*;
+
 import java.awt.BorderLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -41,11 +45,11 @@ public class Main {
     
     private void init() {
         loop = new RacePanel(race, carImage);
-        var car = new Car("test1", 200, 0.07,180, 200);
-        car.dir = Math.toRadians(330);
-        car.vel = 0;
-        car.accel = 40;
-        car.turn = 0.02;
+        var car = new Car("test1", 200, 2,180, 200);
+        car.dir = 330;
+//        car.vel = 0;
+//        car.accel = 40;
+//        car.turn = 0.01;
         race.cars.add(car);
         
         cockpit = new CockpitPanel();
@@ -59,6 +63,35 @@ public class Main {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
+        frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch (e.getKeyCode()) {
+                    case VK_SPACE:
+                        car.accel = -100;
+                        break;
+                    case VK_SHIFT:
+                        car.accel = 0;
+                        car.turn = 0;
+                        break;
+                    case VK_W:
+                        car.accel += 10;
+                        break;
+                    case VK_S:
+                        car.accel -= 10;
+                        break;
+                    case VK_A:
+                        car.turn -= 0.2;
+                        break;
+                    case VK_D:
+                        car.turn += 0.2;
+                        break;
+                    default:
+                        System.out.println(e);
+                }
+            }
+        });
         
         // TODO
         Simulation simul = new Simulation(race, frame);

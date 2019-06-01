@@ -1,6 +1,7 @@
 package cfh.race;
 
 import static java.util.Objects.*;
+import static java.lang.Math.*;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -38,7 +39,7 @@ public class RacePanel extends JPanel {
             for (var car : race.cars) {
                 xform.setToIdentity();
                 xform.translate(car.x - cox, car.y-coy);
-                xform.rotate(car.dir, cox, coy);
+                xform.rotate(toRadians(car.dir), cox, coy);
                 gg.drawImage(carImage, xform, this);
             }
             

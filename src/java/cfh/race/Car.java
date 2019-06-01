@@ -1,33 +1,39 @@
 package cfh.race;
 
 import static java.util.Objects.*;
+
+import java.awt.Point;
+
 import static java.lang.Math.*;
 
 
 public class Car {
 
     final String id;
-    final double maxVel;
+    final float maxVel;
     final float maxTurn;
     
-    double x;
-    double y;
+    float x;
+    float y;
     
-    double vel;
+    float vel;
     float dir;
     
-    double accel;
+    float accel;
     float turn;
     
-    public Car(String id, double maxVel, double maxTurn, double x, double y) {
+    final Point[] sensors = new Point[5];
+    
+    
+    public Car(String id, float maxVel, float maxTurn, float x, float y) {
         this.id = requireNonNull(id);
         this.maxVel = requirePositive(maxVel, "maxVel must be greater than zero: ");
-        this.maxTurn = (float) requirePositive(maxTurn, "maxTurn must be greater than zero: ");
+        this.maxTurn = requirePositive(maxTurn, "maxTurn must be greater than zero: ");
         this.x = x;
         this.y = y;
     }
     
-    private double requirePositive(double value, String message) {
+    private float requirePositive(float value, String message) {
         if (value <= 0)
             throw new IllegalArgumentException(message + value);
         return value;

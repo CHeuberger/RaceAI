@@ -1,5 +1,6 @@
 package cfh.race;
 
+import static java.lang.Math.*;
 import static java.util.Objects.*;
 
 import java.awt.Component;
@@ -52,6 +53,13 @@ public class Simulation extends SwingWorker<Void, Long> {
                 }
                 
                 car.move(delta);
+                var x1 = round(car.x);
+                var y1 = round(car.y);
+                var index = 0;
+                for (var ang = car.dir-90; ang <= car.dir+90; ang += 45) {
+                    car.sensors[index++] = race.sensor(x1, y1, ang);
+                }
+
 
                 if (save && !race.free(car.x, car.y)) {
                     car.vel = 0;

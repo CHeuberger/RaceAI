@@ -21,8 +21,8 @@ public class Race {
         this.cars = new ArrayList<>();
     }
     
-    public boolean free(double x, double y) {
-        return free((int) round(x), (int) round(y));
+    public boolean free(float x, float y) {
+        return free(round(x), round(y));
     }
     
     public boolean free(int x, int y) {
@@ -123,7 +123,8 @@ public class Race {
                 }
                 return new Point(x, y);
             }
+            default:
+                return null;
         }
-        return null;
     }
 }

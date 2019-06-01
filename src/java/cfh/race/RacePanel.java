@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -37,7 +36,7 @@ public class RacePanel extends JPanel {
                 var x = e.getX();
                 var y = e.getY();
                 Car next = null;
-                double dist = Double.MAX_VALUE;
+                var dist = Double.MAX_VALUE;
                 for (Car car : race.cars) {
                     var dx = car.x - x;
                     var dy = car.y - y;
@@ -68,11 +67,10 @@ public class RacePanel extends JPanel {
             AffineTransform xform = new AffineTransform();
             for (var car : race.cars) {
                 if (car == selected) {
-                    int x1 = (int) round(car.x);
-                    int y1 = (int) round(car.y);
+                    int x1 = round(car.x);
+                    int y1 = round(car.y);
                     gg.setColor(Color.BLUE);
-                    for (var ang = car.dir-90; ang <= car.dir+90; ang += 45) {
-                        Point p = race.sensor(x1, y1, ang);
+                    for (var p : car.sensors) {
                         if (p != null) {
                             gg.drawLine(x1, y1, p.x, p.y);
                         }

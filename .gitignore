@@ -1,5 +1,5 @@
 /.settings/
-/bin/
+/build/
 *.swp
 *~
 *.bak

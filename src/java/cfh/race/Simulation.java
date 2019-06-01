@@ -31,9 +31,17 @@ public class Simulation extends SwingWorker<Void, Long> {
                 delta = System.currentTimeMillis() - time;
             }
             for (Car car : race.cars) {
-                if (car.x < 0 || car.x >= race.loop.getWidth() || car.y < 0 || car.y > race.loop.getHeight()) {
-                    car.vel = 0;
-                    car.accel = 0;
+                if (car.x < 0) {
+                    car.x = 0;
+                    continue;
+                } else if (car.x >= race.loop.getWidth()) {
+                    car.x = race.loop.getWidth()-1;
+                    continue;
+                } else if (car.y < 0) {
+                    car.y = 0;
+                    continue;
+                } else if (car.y > race.loop.getHeight()) {
+                    car.y = race.loop.getHeight()-1;
                     continue;
                 }
                 var rgb = race.loop.getRGB((int) round(car.x), (int) round(car.y));

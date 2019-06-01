@@ -1,6 +1,5 @@
 package cfh.race;
 
-import static java.lang.Math.*;
 import static java.util.Objects.*;
 
 import java.awt.Component;

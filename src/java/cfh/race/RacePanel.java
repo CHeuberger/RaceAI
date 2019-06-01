@@ -3,9 +3,11 @@ package cfh.race;
 import static java.util.Objects.*;
 import static java.lang.Math.*;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -19,8 +21,9 @@ import javax.swing.JPanel;
 public class RacePanel extends JPanel {
 
     final Race race;
-    
     private final BufferedImage carImage;
+
+    Car selected = null;
     
     public RacePanel(Race race, BufferedImage carImage) {
         this.race = requireNonNull(race);
@@ -44,9 +47,8 @@ public class RacePanel extends JPanel {
                         dist = d;
                     }
                 }
-                if (next != null) {
-                    fireSelected(next);
-                }
+                selected = next;
+                fireSelected(next);
             }
         });
     }
@@ -65,10 +67,23 @@ public class RacePanel extends JPanel {
             
             AffineTransform xform = new AffineTransform();
             for (var car : race.cars) {
+                if (car == selected) {
+                    int x1 = (int) round(car.x);
+                    int y1 = (int) round(car.y);
+                    gg.setColor(Color.BLUE);
+                    for (var ang = car.dir-90; ang <= car.dir+90; ang += 45) {
+                        Point p = race.sensor(x1, y1, ang);
+                        if (p != null) {
+                            gg.drawLine(x1, y1, p.x, p.y);
+                        }
+                    }
+                    gg.setXORMode(Color.CYAN);
+                }
                 xform.setToIdentity();
                 xform.translate(car.x - cox, car.y-coy);
                 xform.rotate(toRadians(car.dir), cox, coy);
                 gg.drawImage(carImage, xform, this);
+                gg.setPaintMode();
             }
             
         } finally {

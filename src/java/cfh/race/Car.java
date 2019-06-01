@@ -8,21 +8,21 @@ public class Car {
 
     final String id;
     final double maxVel;
-    final double maxTurn;
+    final float maxTurn;
     
     double x;
     double y;
     
     double vel;
-    double dir;
+    float dir;
     
     double accel;
-    double turn;
+    float turn;
     
     public Car(String id, double maxVel, double maxTurn, double x, double y) {
         this.id = requireNonNull(id);
         this.maxVel = requirePositive(maxVel, "maxVel must be greater than zero: ");
-        this.maxTurn = requirePositive(maxTurn, "maxTurn must be greater than zero: ");
+        this.maxTurn = (float) requirePositive(maxTurn, "maxTurn must be greater than zero: ");
         this.x = x;
         this.y = y;
     }
@@ -50,5 +50,6 @@ public class Car {
         if (turn < -maxTurn) turn = -maxTurn;
         else if (turn > maxTurn) turn = maxTurn;
         dir += turn  * v;
+        dir %= 360;
     }
 }

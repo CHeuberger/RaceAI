@@ -9,10 +9,13 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
+
+import cfh.race.mind.StraightSensor;
 
 
 public class Main {
@@ -31,6 +34,7 @@ public class Main {
     private RacePanel loop;
     private CockpitPanel cockpit;
     private Simulation simulation;
+    private JToggleButton activeButton;
     
     
     private Main() throws IOException {
@@ -46,7 +50,10 @@ public class Main {
     private void init() {
         cockpit = new CockpitPanel();
         
-        JToggleButton activeButton = new JToggleButton("Active");
+        var restartButton = new JButton("Restart");
+        restartButton.addActionListener(this::doRestart);
+        
+        activeButton = new JToggleButton("Active");
         activeButton.addActionListener(this::doActive);
         activeButton.setFocusable(false);
         
@@ -54,17 +61,11 @@ public class Main {
         buttons.add(Box.createHorizontalStrut(10));
         buttons.add(activeButton);
         buttons.add(Box.createHorizontalGlue());
+        buttons.add(restartButton);
         buttons.add(Box.createHorizontalStrut(10));
         
         loop = new RacePanel(race, carImage);
         loop.addListener(cockpit::car);
-        var x = 300;
-        var y = 100;
-        for (var i = 0; i < 5; i++) {
-            var car = new Car(Integer.toString(i), null, 200, 2, x, y);
-            race.cars.add(car);
-            y += 19;
-        }
         
         var frame = new JFrame("Race");
         frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
@@ -83,6 +84,7 @@ public class Main {
                 simulation.cancel(true);
             }
         });
+        doRestart(null);
         simulation.execute();
     }
 
@@ -98,5 +100,20 @@ public class Main {
     
     private void doActive(ActionEvent ev) {
         simulation.active(((JToggleButton) ev.getSource()).isSelected());
+    }
+    
+    private void doRestart(ActionEvent ev) {
+        race.cars.clear();
+        loop.selected = null;
+        var x = 300;
+        var y = 100;
+        for (var i = 0; i < 5; i++) {
+            var car = new Car(Integer.toString(i), new StraightSensor(), 200, 2, x, y);
+            race.cars.add(car);
+            y += 19;
+        }
+        simulation.active(false);
+        activeButton.setSelected(false);
+        loop.repaint();
     }
 }

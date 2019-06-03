@@ -71,12 +71,13 @@ public class Car {
             var control = mind.control(
                     delta,
                     vel,
+                    accel,
+                    turn,
                     distances);
-            var t = control.turn();
-            if (t < -maxTurn) turn = -maxTurn;
-            else if (t > maxTurn) turn = maxTurn;
-            else turn = t;
-            accel = control.accel();
+            if (control.turn < -maxTurn) turn = -maxTurn;
+            else if (control.turn > maxTurn) turn = maxTurn;
+            else turn = control.turn;
+            accel = control.accel;
         }
     }
 }

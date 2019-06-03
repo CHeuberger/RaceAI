@@ -3,6 +3,8 @@ package cfh.race;
 import static java.util.Objects.*;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.util.Arrays;
 
 import static java.lang.Math.*;
 
@@ -10,9 +12,11 @@ import static java.lang.Math.*;
 public class Car {
 
     final String id;
+    final Mind mind;
+    
     final float maxVel;
     final float maxTurn;
-    
+
     float x;
     float y;
     
@@ -25,8 +29,9 @@ public class Car {
     final Point[] sensors = new Point[5];
     
     
-    public Car(String id, float maxVel, float maxTurn, float x, float y) {
+    public Car(String id, Mind mind, float maxVel, float maxTurn, float x, float y) {
         this.id = requireNonNull(id);
+        this.mind = mind;
         this.maxVel = requirePositive(maxVel, "maxVel must be greater than zero: ");
         this.maxTurn = requirePositive(maxTurn, "maxTurn must be greater than zero: ");
         this.x = x;
@@ -57,5 +62,21 @@ public class Car {
         else if (turn > maxTurn) turn = maxTurn;
         dir += turn  * v;
         dir %= 360;
+    }
+
+    public void steer(long delta) {
+        if (mind != null) {
+            var pos = new Point2D.Float(x, y);
+            var distances = Arrays.stream(sensors).mapToDouble(pos::distance).toArray();
+            var control = mind.control(
+                    delta,
+                    vel,
+                    distances);
+            var t = control.turn();
+            if (t < -maxTurn) turn = -maxTurn;
+            else if (t > maxTurn) turn = maxTurn;
+            else turn = t;
+            accel = control.accel();
+        }
     }
 }

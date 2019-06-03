@@ -1,14 +1,17 @@
 package cfh.race;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.Box;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 
@@ -27,6 +30,7 @@ public class Main {
     
     private RacePanel loop;
     private CockpitPanel cockpit;
+    private Simulation simulation;
     
     
     private Main() throws IOException {
@@ -42,12 +46,22 @@ public class Main {
     private void init() {
         cockpit = new CockpitPanel();
         
+        JToggleButton activeButton = new JToggleButton("Active");
+        activeButton.addActionListener(this::doActive);
+        activeButton.setFocusable(false);
+        
+        var buttons = Box.createHorizontalBox();
+        buttons.add(Box.createHorizontalStrut(10));
+        buttons.add(activeButton);
+        buttons.add(Box.createHorizontalGlue());
+        buttons.add(Box.createHorizontalStrut(10));
+        
         loop = new RacePanel(race, carImage);
         loop.addListener(cockpit::car);
         var x = 300;
         var y = 100;
         for (var i = 0; i < 5; i++) {
-            var car = new Car(Integer.toString(i), 200, 2, x, y);
+            var car = new Car(Integer.toString(i), null, 200, 2, x, y);
             race.cars.add(car);
             y += 19;
         }
@@ -55,21 +69,21 @@ public class Main {
         var frame = new JFrame("Race");
         frame.setDefaultCloseOperation(frame.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
+        frame.add(buttons, BorderLayout.PAGE_START);
         frame.add(new JScrollPane(loop), BorderLayout.CENTER);
         frame.add(cockpit, BorderLayout.PAGE_END);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         
-        // TODO
-        Simulation simul = new Simulation(race, frame);
+        simulation = new Simulation(race, frame);
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                simul.cancel(true);
+                simulation.cancel(true);
             }
         });
-        simul.execute();
+        simulation.execute();
     }
 
     private Race readRace(String name) throws IOException {
@@ -80,5 +94,9 @@ public class Main {
             var img = ImageIO.read(inp);
             return new Race(name, img);
         }
+    }
+    
+    private void doActive(ActionEvent ev) {
+        simulation.active(((JToggleButton) ev.getSource()).isSelected());
     }
 }

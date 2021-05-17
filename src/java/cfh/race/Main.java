@@ -52,6 +52,7 @@ public class Main {
         
         var restartButton = new JButton("Restart");
         restartButton.addActionListener(this::doRestart);
+        restartButton.setFocusable(false);
         
         activeButton = new JToggleButton("Active");
         activeButton.addActionListener(this::doActive);
